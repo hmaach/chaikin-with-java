@@ -144,7 +144,15 @@ public class Main extends JPanel implements Runnable {
         } else {
             g2d.setColor(Color.ORANGE);
             g2d.drawString("Press SPACE to clear the window.", 20, 30);
-            
+            if (pattern.animationStart) {
+                g2d.setColor(Color.ORANGE);
+                int currentStep = pattern.frame-1 ;
+                if (currentStep == -1) {
+                    currentStep = 7;
+                }
+                String stepText = String.format("Step: %d / %d", currentStep, 7);
+                g2d.drawString(stepText, 20, 60);
+            }
         }
 
         // Draw path
