@@ -16,6 +16,7 @@ public class MouseHandler extends MouseAdapter {
     @Override
     public void mouseClicked(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON1) { // left click
+            app.setWarningMessage(null); // remove the warning message
             app.addPoint(new Point(e.getX(), e.getY()));
             this.app.repaint();
         }

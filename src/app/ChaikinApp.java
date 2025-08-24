@@ -16,8 +16,9 @@ public class ChaikinApp {
     private boolean isAnimating = false;
     private int currentStep = 0;
     private Timer animationTimer;
+    private String warningMessage = null;
 
-    private static final int ANIMATION_DELAY = 800;
+    private static final int ANIMATION_DELAY = 1000; // 1s
     public static final int MAX_STEPS = 7;
 
     public ChaikinApp() {
@@ -39,10 +40,14 @@ public class ChaikinApp {
     }
 
     public void startChaikin() {
-        if (this.fixedPoints.size() > 1 && !isAnimating) {
+        if (this.fixedPoints.size() > 2 && !isAnimating) {
             this.lines = Chaikin.refine(this);
-
             this.startAnimation();
+        } else if (this.fixedPoints.size() == 2) {
+            this.isAnimating = true;
+            repaint();
+        } else {
+            setWarningMessage("⚠️ Please add at least 2 points before starting.");
         }
     }
 
@@ -58,7 +63,7 @@ public class ChaikinApp {
     }
 
     public boolean hasLines() {
-        return !lines.isEmpty() && !lines.get(0).isEmpty();
+        return fixedPoints.size() > 2;
     }
 
     public List<List<Line>> getLines() {
@@ -81,7 +86,7 @@ public class ChaikinApp {
     }
 
     public void startAnimation() {
-        if (!lines.isEmpty()) {
+        if (!lines.isEmpty() && fixedPoints.size() > 2) {
             this.isAnimating = true;
             this.currentStep = 0;
             this.animationTimer.start();
@@ -112,6 +117,15 @@ public class ChaikinApp {
                 currentStep = 0;
             }
         }
+    }
+
+    public String getWarningMessage() {
+        return warningMessage;
+    }
+
+    public void setWarningMessage(String message) {
+        this.warningMessage = message;
+        repaint();
     }
 
     public void repaint() {
