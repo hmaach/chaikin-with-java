@@ -2,69 +2,88 @@ package src.algorithm;
 
 import java.util.ArrayList;
 import java.util.List;
+import src.app.ChaikinApp;
 import src.model.Line;
 import src.model.Point;
 
 public class Chaikin {
 
-    public static List<List<Line>> refine(List<Point> points) {
-        List<List<Line>> lines2D = new ArrayList<>(new ArrayList<>());
+    public static List<List<Line>> refine(ChaikinApp app) {
+        int maxIterations = ChaikinApp.MAX_STEPS;
+        List<Point> points = app.getFixedPoints();
+        List<List<Line>> lines2D = new ArrayList<>();
 
-        for (int i = 0; i < 7; i++) {
-            List<Line> lines = new ArrayList<>();
-            if (i == 0) {
-                for (int j = 0; j < points.size() - 1; j++) {
-                    Line line = new Line(points.get(j), points.get(j + 1));
-                    lines.add(line);
-                }
-            } else {
-                List<Line> lastPath = lines2D.get(lines2D.size() - 1);
-                for (int j = 0; j < lastPath.size() - 1; j++) {
+        if (points.size() < 2) {
+            return lines2D;
+        }
 
-                    Line current = lastPath.get(j);
-                    Point currentP1 = current.getFirstPoint();
-                    Point currentP2 = current.getSecondPoint();
+        List<Point> originalPath = new ArrayList<>();
+        for (Point p : points) {
+            originalPath.add(new Point(p.getX(), p.getY()));
+        }
 
-                    Line next = lastPath.get(j + 1);
-                    Point nextP1 = next.getFirstPoint();
-                    Point nextP2 = next.getSecondPoint();
+        List<Line> initialLines = new ArrayList<>();
+        for (int i = 0; i < originalPath.size() - 1; i++) {
+            initialLines.add(new Line(originalPath.get(i), originalPath.get(i + 1)));
+        }
+        lines2D.add(initialLines);
 
-                    int deltaCurrentX = currentP2.getX() - currentP1.getX();
-                    int deltaCurrentY = currentP2.getY() - currentP1.getY();
+        List<Point> currentPath = new ArrayList<>(originalPath);
 
-                    int deltaNextX = nextP2.getX() - nextP1.getX();
-                    int deltaNextY = nextP2.getY() - nextP1.getY();
+        for (int iter = 1; iter < maxIterations; iter++) {
+            List<Point> newPath = new ArrayList<>();
 
-                    lines.add(current);
-                    Line newLine = scale_points(currentP2, nextP1, deltaCurrentX, deltaCurrentY, deltaNextX, deltaNextY);
-                    lines.add(newLine);
+            for (int i = 0; i < currentPath.size() - 1; i++) {
+                Point p0 = currentPath.get(i);
+                Point p1 = currentPath.get(i + 1);
+
+                Point p25 = make25Point(p0, p1);
+                Point p75 = make75Point(p0, p1);
+
+                if (i == 0) {
+                    newPath.add(new Point(p0.getX(), p0.getY()));
+                    newPath.add(p75);
+                } else {
+                    newPath.add(p25);
+                    if (i == currentPath.size() - 2) {
+                        newPath.add(new Point(p1.getX(), p1.getY()));
+                    } else {
+                        newPath.add(p75);
+                    }
                 }
             }
-            lines2D.add(lines);
+
+            currentPath = newPath;
+
+            // Convert points back to lines for storage
+            List<Line> currentLines = new ArrayList<>();
+            for (int i = 0; i < currentPath.size() - 1; i++) {
+                currentLines.add(new Line(currentPath.get(i), currentPath.get(i + 1)));
+            }
+            lines2D.add(currentLines);
         }
-        print2DList(lines2D);
+
         return lines2D;
     }
 
-    private static Line scale_points(Point currentP2, Point nextP1, int deltaCurrentX, int deltaCurrentY, int deltaNextX, int deltaNextY) {
+    private static Point make25Point(Point p0, Point p1) {
+        int deltaX = p1.getX() - p0.getX();
+        int deltaY = p1.getY() - p0.getY();
 
-        currentP2.setX(((int) ((double) currentP2.getX() - (double) deltaCurrentX * 0.25)));
-        currentP2.setY(((int) ((double) currentP2.getY() - (double) deltaCurrentY * 0.25)));
+        int newX = (int) ((double) p0.getX() + (double) deltaX * 0.25);
+        int newY = (int) ((double) p0.getY() + (double) deltaY * 0.25);
 
-        nextP1.setX(((int) ((double) nextP1.getX() + (double) deltaNextX * 0.25)));
-        nextP1.setY(((int) ((double) nextP1.getY() + (double) deltaNextY * 0.25)));
-        return new Line(new Point(currentP2.getX(), currentP2.getY()), new Point(nextP1.getX(), nextP1.getY()));
+        return new Point(newX, newY);
     }
 
-    private static void print2DList(List<List<Line>> list2D) {
-        System.err.println("------------start-------------");
-        for (List<Line> list : list2D) {
-            for (Line line : list) {
-                if (line != null) {
-                    System.err.println(line.toString());
-                }
-            }
-        }
-        System.err.println("------------end-------------");
+    private static Point make75Point(Point p0, Point p1) {
+        int deltaX = p1.getX() - p0.getX();
+        int deltaY = p1.getY() - p0.getY();
+
+        int newX = (int) ((double) p0.getX() + (double) deltaX * 0.75);
+        int newY = (int) ((double) p0.getY() + (double) deltaY * 0.75);
+
+        return new Point(newX, newY);
     }
+
 }

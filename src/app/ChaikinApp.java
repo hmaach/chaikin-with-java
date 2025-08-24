@@ -18,7 +18,7 @@ public class ChaikinApp {
     private Timer animationTimer;
 
     private static final int ANIMATION_DELAY = 800;
-    private static final int MAX_STEPS = 7;
+    public static final int MAX_STEPS = 7;
 
     public ChaikinApp() {
         this.fixedPoints = new ArrayList<>();
@@ -40,7 +40,7 @@ public class ChaikinApp {
 
     public void startChaikin() {
         if (this.fixedPoints.size() > 1 && !isAnimating) {
-            this.lines = Chaikin.refine(this.fixedPoints);
+            this.lines = Chaikin.refine(this);
 
             this.startAnimation();
         }
