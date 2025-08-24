@@ -77,8 +77,10 @@ public class Canvas extends JPanel {
         graphics.setFont(new Font("Arial", Font.BOLD, 16));
 
         if (app.isAnimating()) {
-            String stepText = String.format("Step: %d / 7", app.getCurrentStep() + 1);
-            graphics.drawString(stepText, 10, 25);
+            if (app.hasLines()) {
+                String stepText = String.format("Step: %d / 7", app.getCurrentStep() + 1);
+                graphics.drawString(stepText, 10, 25);
+            }
         } else {
             if (app.getFixedPoints().isEmpty()) {
                 graphics.drawString("Left click to add points", 10, 25);

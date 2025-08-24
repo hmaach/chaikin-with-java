@@ -34,7 +34,6 @@ public class ChaikinApp {
     private void setupAnimationTimer() {
         this.animationTimer = new Timer(ANIMATION_DELAY, e -> {
             nextStep();
-            repaint();
         });
         this.animationTimer.setRepeats(true);
     }
@@ -66,10 +65,6 @@ public class ChaikinApp {
         return fixedPoints.size() > 2;
     }
 
-    public List<List<Line>> getLines() {
-        return lines;
-    }
-
     public List<Line> getCurrentStepLines() {
         if (hasLines() && currentStep < lines.size()) {
             return lines.get(currentStep);
@@ -79,10 +74,6 @@ public class ChaikinApp {
 
     public boolean hasTwoPoints() {
         return fixedPoints.size() == 2;
-    }
-
-    public void addLines(List<Line> lines) {
-        this.lines.add(lines);
     }
 
     public void startAnimation() {
@@ -116,6 +107,7 @@ public class ChaikinApp {
             if (currentStep >= MAX_STEPS) {
                 currentStep = 0;
             }
+            repaint();
         }
     }
 
