@@ -7,8 +7,8 @@ import src.model.Point;
 
 public class Chaikin {
 
-    public static List<Line> refine(List<Point> controlPoints) {
-        List<Line> lines = new ArrayList<>();
+    public static List<List<Line>> refine(List<Point> controlPoints) {
+        List<List<Line>> lines = new ArrayList<>(new ArrayList<>());
 
         return lines;
     }

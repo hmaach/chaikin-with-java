@@ -1,0 +1,13 @@
+flowchart TD
+    A["Start Program: Main.main()"] --> B["ChaikinApp.run()"]
+    B --> C["Create Window (JFrame)"]
+    C --> D["Attach CanvasPanel & MouseHandler"]
+    D --> E["Wait for User Input"]
+    E -->|Left Mouse Click| F["MouseHandler adds Point to fixedPoints"]
+    F --> G["CanvasPanel.repaint()"]
+    G --> H["paintComponent draws circle at clicked position"]
+    H --> E
+    E -->|Press Enter| I["Start Chaikin Animation iterations"]
+    I --> J["Apply Chaikin algorithm to points"]
+    J --> G
+    E -->|Press Escape| K["Exit Application"]
