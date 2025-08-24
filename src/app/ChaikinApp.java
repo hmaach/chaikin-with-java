@@ -2,6 +2,7 @@ package src.app;
 
 import java.util.ArrayList;
 import java.util.List;
+import src.algorithm.Chaikin;
 import src.model.Line;
 import src.model.Point;
 import src.ui.Window;
@@ -10,7 +11,7 @@ public class ChaikinApp {
 
     private Window window;
     private final List<Point> fixedPoints;
-    private final List<List<Line>> lines;
+    private List<List<Line>> lines;
     private boolean isAnimating = false;
 
     public ChaikinApp() {
@@ -24,6 +25,8 @@ public class ChaikinApp {
 
     public void startChaikin() {
         if (this.fixedPoints.size() > 1) {
+            this.lines = Chaikin.refine(this.fixedPoints);
+
             this.startAnimation();
         }
     }
