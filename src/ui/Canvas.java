@@ -1,6 +1,7 @@
 package src.ui;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.util.List;
 import javax.swing.JPanel;
@@ -45,6 +46,7 @@ public class Canvas extends JPanel {
 
                 this.drawLine(graphics, p1, p2);
             }
+            drawStepInfo(graphics);
         }
     }
 
@@ -59,10 +61,9 @@ public class Canvas extends JPanel {
     }
 
     private void drawLines(Graphics graphics) {
-        List<Line> currentLines = this.app.getLines().get(0);
-
+        List<Line> currentLines = app.getCurrentStepLines();
         for (Line line : currentLines) {
-            this.drawLine(graphics, line.getFirstPoint(), line.getSecondPoint());
+            drawLine(graphics, line.getFirstPoint(), line.getSecondPoint());
         }
     }
 
@@ -72,4 +73,12 @@ public class Canvas extends JPanel {
         graphics.drawLine(p1.getX(), p1.getY(), p2.getX(), p2.getY());
     }
 
+    private void drawStepInfo(Graphics graphics) {
+        if (app.isAnimating()) {
+            graphics.setColor(TEXT_COLOR);
+            graphics.setFont(new Font("Arial", Font.BOLD, 16));
+            String stepText = "Step: " + (app.getCurrentStep() + 1) + "/7";
+            graphics.drawString(stepText, 10, 25);
+        }
+    }
 }

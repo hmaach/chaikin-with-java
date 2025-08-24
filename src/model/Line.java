@@ -26,4 +26,10 @@ public class Line {
         this.secondPoint = secondPoint;
     }
 
+    @Override
+    public String toString() {
+        return String.format("{P1: (%d, %d)} {P2: (%d, %d)}",
+                firstPoint.getX(), firstPoint.getY(),
+                secondPoint.getX(), secondPoint.getY());
+    }
 }

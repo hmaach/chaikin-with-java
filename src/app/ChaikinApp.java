@@ -2,6 +2,7 @@ package src.app;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.Timer;
 import src.algorithm.Chaikin;
 import src.model.Line;
 import src.model.Point;
@@ -13,18 +14,32 @@ public class ChaikinApp {
     private final List<Point> fixedPoints;
     private List<List<Line>> lines;
     private boolean isAnimating = false;
+    private int currentStep = 0;
+    private Timer animationTimer;
+
+    private static final int ANIMATION_DELAY = 800;
+    private static final int MAX_STEPS = 7;
 
     public ChaikinApp() {
         this.fixedPoints = new ArrayList<>();
         this.lines = new ArrayList<>();
+        setupAnimationTimer();
     }
 
     public void run() {
         this.window = new Window(this);
     }
 
+    private void setupAnimationTimer() {
+        this.animationTimer = new Timer(ANIMATION_DELAY, e -> {
+            nextStep();
+            repaint();
+        });
+        this.animationTimer.setRepeats(true);
+    }
+
     public void startChaikin() {
-        if (this.fixedPoints.size() > 1) {
+        if (this.fixedPoints.size() > 1 && !isAnimating) {
             this.lines = Chaikin.refine(this.fixedPoints);
 
             this.startAnimation();
@@ -50,6 +65,13 @@ public class ChaikinApp {
         return lines;
     }
 
+    public List<Line> getCurrentStepLines() {
+        if (hasLines() && currentStep < lines.size()) {
+            return lines.get(currentStep);
+        }
+        return new ArrayList<>();
+    }
+
     public boolean hasTwoPoints() {
         return fixedPoints.size() == 2;
     }
@@ -58,19 +80,19 @@ public class ChaikinApp {
         this.lines.add(lines);
     }
 
-    public void repaint() {
-        if (window != null) {
-            window.repaint();
-        }
-    }
-
     public void startAnimation() {
-        this.isAnimating = true;
-        repaint();
+        if (!lines.isEmpty()) {
+            this.isAnimating = true;
+            this.currentStep = 0;
+            this.animationTimer.start();
+            repaint();
+        }
     }
 
     public void stopAnimation() {
         this.isAnimating = false;
+        this.currentStep = 0;
+        this.animationTimer.stop();
         repaint();
     }
 
@@ -78,15 +100,35 @@ public class ChaikinApp {
         return isAnimating;
     }
 
+    public int getCurrentStep() {
+        return currentStep;
+    }
+
+    public void nextStep() {
+        if (isAnimating && !lines.isEmpty()) {
+            currentStep++;
+
+            if (currentStep >= MAX_STEPS) {
+                currentStep = 0;
+            }
+        }
+    }
+
+    public void repaint() {
+        if (window != null) {
+            window.repaint();
+        }
+    }
+
     public void clear() {
+        stopAnimation();
         this.fixedPoints.clear();
         this.lines.clear();
-        this.stopAnimation();
-        this.repaint();
+        repaint();
     }
 
     public void exit() {
-        clear();
+        stopAnimation();
         if (window != null) {
             window.exit();
         }
