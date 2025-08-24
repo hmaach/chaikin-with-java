@@ -1,4 +1,4 @@
-package src;
+package src.ui;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -25,11 +25,8 @@ public class Window {
         frame.setLocation(1000, 50);
     }
 
-    public Cursor getCursor() {
-        return cursor;
-    }
-
     public void setCursor(Cursor cursor) {
         this.cursor = cursor;
     }
+
 }
